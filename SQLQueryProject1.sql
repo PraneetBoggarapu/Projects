@@ -144,3 +144,57 @@ WHERE cd.continent IS NOT NULL
 
 SELECT * 
 FROM PercentPopulationVaccinated
+
+
+
+
+
+
+-- Queries used for Tableau 
+
+-- 1. 
+SELECT SUM(new_cases) AS total_cases, SUM(cast(new_deaths AS bigint)) AS total_deaths, SUM(cast(new_deaths AS bigint))/SUM(New_Cases)*100 AS DeathPercentage
+FROM PortfolioProject1..CovidDeaths
+WHERE continent IS NOT NULL 
+ORDER BY 1,2
+
+-- Just a double check based off the data provided
+-- numbers are extremely close so we will keep them - The Second includes "International"  Location
+
+
+--Select SUM(new_cases) as total_cases, SUM(cast(new_deaths as int)) as total_deaths, SUM(cast(new_deaths as int))/SUM(New_Cases)*100 as DeathPercentage
+--From PortfolioProject..CovidDeaths
+----Where location like '%states%'
+--where location = 'World'
+----Group By date
+--order by 1,2
+
+
+-- 2. 
+
+-- We take these out as they are not inluded in the above queries and want to stay consistent
+-- European Union is part of Europe
+
+SELECT location, SUM(cast(new_deaths AS bigint)) AS TotalDeathCount
+FROM PortfolioProject1..CovidDeaths
+WHERE continent IS NULL 
+AND location NOT IN ('World', 'European Union', 'International')
+GROUP BY location
+ORDER BY TotalDeathCount DESC
+
+
+-- 3.
+
+SELECT Location, Population, MAX(total_cases) AS HighestInfectionCount,  Max((total_cases/population))*100 AS PercentPopulationInfected
+FROM PortfolioProject1..CovidDeaths
+GROUP BY Location, Population
+ORDER BY PercentPopulationInfected DESC
+
+
+-- 4.
+
+
+SELECT Location, Population, date, MAX(total_cases) AS HighestInfectionCount,  Max((total_cases/population))*100 AS PercentPopulationInfected
+FROM PortfolioProject1..CovidDeaths
+GROUP BY Location, Population, date
+ORDER BY PercentPopulationInfected DESC
